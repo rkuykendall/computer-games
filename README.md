@@ -6,7 +6,7 @@ A collection of simple browser-based mini-games built with React, TypeScript, an
 
 1. **ABC Sequence Game** - Press A, B, then C in order
 2. **Number Sequence Game** - Press numbers 1-5 in sequence  
-3. **Color Reaction Game** - Press the first letter of the displayed color (timed challenge)
+3. **Spacebar Sprint** - Press spacebar 20 times as fast as you can
 
 ## 🚀 Features
 
@@ -110,15 +110,12 @@ npm run deploy
 - Same visual feedback system as ABC game
 - Wrong number resets the sequence
 
-### Color Reaction Game
-- 30-second timed challenge
-- Press the first letter of the displayed color:
-  - **R** for Red
-  - **G** for Green  
-  - **B** for Blue
-  - **Y** for Yellow
-- Score points for correct responses
-- Try to beat your high score!
+### Spacebar Sprint
+- Press spacebar 20 times as fast as possible
+- Game starts automatically on first spacebar press
+- Progress bar shows your advancement
+- Score based on clicks per second (higher is better)
+- Try to beat your personal best time!
 
 ## 🔧 Development
 
@@ -132,7 +129,7 @@ src/
 ├── games/
 │   ├── ABCSequenceGame.tsx
 │   ├── NumberSequenceGame.tsx
-│   ├── ColorReactionGame.tsx
+│   ├── SpacebarSprintGame.tsx
 │   └── index.ts           # Games registry
 ├── types/
 │   └── Game.ts            # TypeScript interfaces

@@ -1,7 +1,7 @@
 import type { Game } from "../types/Game";
 import ABCSequenceGame from "./ABCSequenceGame";
 import NumberSequenceGame from "./NumberSequenceGame";
-import ColorReactionGame from "./ColorReactionGame";
+import SpacebarSprintGame from "./SpacebarSprintGame";
 
 export const games: Game[] = [
   {
@@ -17,9 +17,9 @@ export const games: Game[] = [
     component: NumberSequenceGame,
   },
   {
-    id: "color-reaction",
-    title: "Color Reaction",
-    description: "Press the first letter of the displayed color",
-    component: ColorReactionGame,
+    id: "spacebar-sprint",
+    title: "Spacebar Sprint",
+    description: "Press spacebar 20 times as fast as you can",
+    component: SpacebarSprintGame,
   },
 ];
