@@ -1,22 +1,55 @@
 import React, { useState } from 'react';
 import type { Game } from '../types/Game';
 import { games } from '../games';
+import WinScreen from './WinScreen';
+
+type GameFlowState = 'menu' | 'playing' | 'win-screen';
 
 const GameBrowser: React.FC = () => {
-  const [selectedGame, setSelectedGame] = useState<Game | null>(null);
-  const [shuffledGames, setShuffledGames] = useState<Game[]>(games);
+  const [gameFlowState, setGameFlowState] = useState<GameFlowState>('menu');
+  const [currentGameIndex, setCurrentGameIndex] = useState(0);
+  const [gameSequence, setGameSequence] = useState<Game[]>(games);
+  const [lastScore, setLastScore] = useState<number | undefined>();
+  const [gamesCompleted, setGamesCompleted] = useState(0);
 
-  const shuffleGames = () => {
+  const currentGame = gameSequence[currentGameIndex];
+  const nextGame = gameSequence[(currentGameIndex + 1) % gameSequence.length];
+
+  const shuffleAndStart = () => {
     const shuffled = [...games].sort(() => Math.random() - 0.5);
-    setShuffledGames(shuffled);
+    setGameSequence(shuffled);
+    setCurrentGameIndex(0);
+    setGameFlowState('playing');
+    setGamesCompleted(0);
+  };
+
+  const startGame = (game: Game) => {
+    const gameIndex = games.findIndex(g => g.id === game.id);
+    setCurrentGameIndex(gameIndex);
+    setGameSequence(games);
+    setGameFlowState('playing');
+    setGamesCompleted(0);
+  };
+
+  const handleGameComplete = (score?: number) => {
+    setLastScore(score);
+    setGamesCompleted(prev => prev + 1);
+    setGameFlowState('win-screen');
+  };
+
+  const goToNextGame = () => {
+    const nextIndex = (currentGameIndex + 1) % gameSequence.length;
+    setCurrentGameIndex(nextIndex);
+    setGameFlowState('playing');
   };
 
   const goBackToMenu = () => {
-    setSelectedGame(null);
+    setGameFlowState('menu');
+    setCurrentGameIndex(0);
+    setGamesCompleted(0);
   };
 
-  if (selectedGame) {
-    const GameComponent = selectedGame.component;
+  if (gameFlowState === 'win-screen') {
     return (
       <div>
         <header style={{
@@ -39,16 +72,66 @@ const GameBrowser: React.FC = () => {
               fontSize: '1rem'
             }}
           >
-            ← Back to Games
+            ← Back to Menu
           </button>
-          <h1 style={{ margin: 0, color: '#333' }}>{selectedGame.title}</h1>
-          <div></div> {/* Spacer for flex layout */}
+          <div style={{ textAlign: 'center' }}>
+            <h1 style={{ margin: 0, color: '#333' }}>Game Complete!</h1>
+            <p style={{ margin: '0.25rem 0 0 0', color: '#666', fontSize: '0.9rem' }}>
+              Games completed: {gamesCompleted}
+            </p>
+          </div>
+          <div></div>
         </header>
-        <GameComponent />
+        <WinScreen
+          title={currentGame.title}
+          score={lastScore}
+          onNextGame={goToNextGame}
+          nextGameTitle={nextGame.title}
+        />
       </div>
     );
   }
 
+  if (gameFlowState === 'playing') {
+    const GameComponent = currentGame.component;
+    return (
+      <div>
+        <header style={{
+          padding: '1rem',
+          backgroundColor: '#f5f5f5',
+          borderBottom: '1px solid #ddd',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center'
+        }}>
+          <button
+            onClick={goBackToMenu}
+            style={{
+              padding: '0.5rem 1rem',
+              backgroundColor: '#2196F3',
+              color: 'white',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: 'pointer',
+              fontSize: '1rem'
+            }}
+          >
+            ← Back to Menu
+          </button>
+          <div style={{ textAlign: 'center' }}>
+            <h1 style={{ margin: 0, color: '#333' }}>{currentGame.title}</h1>
+            <p style={{ margin: '0.25rem 0 0 0', color: '#666', fontSize: '0.9rem' }}>
+              Games completed: {gamesCompleted} • Next: {nextGame.title}
+            </p>
+          </div>
+          <div></div>
+        </header>
+        <GameComponent onGameComplete={handleGameComplete} />
+      </div>
+    );
+  }
+
+  // Menu state
   return (
     <div style={{ 
       padding: '2rem',
@@ -69,24 +152,25 @@ const GameBrowser: React.FC = () => {
           fontSize: '1.1rem',
           margin: '0.5rem 0 2rem'
         }}>
-          Choose a game to play or shuffle for a random order!
+          Choose a game to play or shuffle for a random adventure!
         </p>
         
         <button
-          onClick={shuffleGames}
+          onClick={shuffleAndStart}
           style={{
-            padding: '0.75rem 1.5rem',
-            fontSize: '1rem',
+            padding: '1rem 2rem',
+            fontSize: '1.2rem',
             backgroundColor: '#FF9800',
             color: 'white',
             border: 'none',
-            borderRadius: '8px',
+            borderRadius: '12px',
             cursor: 'pointer',
             marginBottom: '2rem',
-            boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+            boxShadow: '0 4px 8px rgba(0,0,0,0.15)',
+            fontWeight: 'bold'
           }}
         >
-          🔀 Shuffle Games
+          🎲 Start Random Adventure
         </button>
       </header>
 
@@ -96,10 +180,10 @@ const GameBrowser: React.FC = () => {
         gap: '1.5rem',
         padding: '1rem 0'
       }}>
-        {shuffledGames.map((game) => (
+        {games.map((game) => (
           <div
             key={game.id}
-            onClick={() => setSelectedGame(game)}
+            onClick={() => startGame(game)}
             style={{
               border: '1px solid #ddd',
               borderRadius: '12px',

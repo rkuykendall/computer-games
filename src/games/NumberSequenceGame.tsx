@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import type { GameState } from '../types/Game';
+import type { GameState, GameProps } from '../types/Game';
 
-const NumberSequenceGame: React.FC = () => {
+const NumberSequenceGame: React.FC<GameProps> = ({ onGameComplete }) => {
   const [currentStep, setCurrentStep] = useState(0);
   const [gameState, setGameState] = useState<GameState>({ isComplete: false });
   const sequence = useMemo(() => ['1', '2', '3', '4', '5'], []);
@@ -18,6 +18,8 @@ const NumberSequenceGame: React.FC = () => {
             score: 100,
             message: 'Excellent! You completed the number sequence!' 
           });
+          // Call the completion callback
+          onGameComplete?.(100);
         } else {
           setCurrentStep(nextStep);
         }
@@ -33,7 +35,7 @@ const NumberSequenceGame: React.FC = () => {
 
     window.addEventListener('keydown', handleKeyPress);
     return () => window.removeEventListener('keydown', handleKeyPress);
-  }, [currentStep, sequence]);
+  }, [currentStep, sequence, onGameComplete]);
 
   const resetGame = () => {
     setCurrentStep(0);

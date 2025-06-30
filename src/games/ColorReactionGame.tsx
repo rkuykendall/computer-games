@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import type { GameState } from '../types/Game';
+import type { GameState, GameProps } from '../types/Game';
 
-const ColorReactionGame: React.FC = () => {
+const ColorReactionGame: React.FC<GameProps> = ({ onGameComplete }) => {
   const [currentColor, setCurrentColor] = useState<string>('');
   const [score, setScore] = useState(0);
   const [gameState, setGameState] = useState<GameState>({ isComplete: false });
@@ -32,9 +32,11 @@ const ColorReactionGame: React.FC = () => {
         score,
         message: `Time's up! You scored ${score} points!`
       });
+      // Call the completion callback
+      onGameComplete?.(score);
     }
     return () => clearInterval(interval);
-  }, [gameActive, timeLeft, score]);
+  }, [gameActive, timeLeft, score, onGameComplete]);
 
   useEffect(() => {
     if (gameActive) {
