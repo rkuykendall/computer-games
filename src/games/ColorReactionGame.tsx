@@ -1,19 +1,22 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import type { GameState, GameProps } from '../types/Game';
+import React, { useState, useEffect, useMemo } from "react";
+import type { GameState, GameProps } from "../types/Game";
 
 const ColorReactionGame: React.FC<GameProps> = ({ onGameComplete }) => {
-  const [currentColor, setCurrentColor] = useState<string>('');
+  const [currentColor, setCurrentColor] = useState<string>("");
   const [score, setScore] = useState(0);
   const [gameState, setGameState] = useState<GameState>({ isComplete: false });
   const [timeLeft, setTimeLeft] = useState(30);
   const [gameActive, setGameActive] = useState(false);
 
-  const colors = useMemo(() => [
-    { name: 'Red', key: 'R', color: '#f44336' },
-    { name: 'Green', key: 'G', color: '#4CAF50' },
-    { name: 'Blue', key: 'B', color: '#2196F3' },
-    { name: 'Yellow', key: 'Y', color: '#FFC107' }
-  ], []);
+  const colors = useMemo(
+    () => [
+      { name: "Red", key: "R", color: "#f44336" },
+      { name: "Green", key: "G", color: "#4CAF50" },
+      { name: "Blue", key: "B", color: "#2196F3" },
+      { name: "Yellow", key: "Y", color: "#FFC107" },
+    ],
+    []
+  );
 
   const getRandomColor = useMemo(() => {
     return () => colors[Math.floor(Math.random() * colors.length)];
@@ -30,7 +33,7 @@ const ColorReactionGame: React.FC<GameProps> = ({ onGameComplete }) => {
       setGameState({
         isComplete: true,
         score,
-        message: `Time's up! You scored ${score} points!`
+        message: `Time's up! You scored ${score} points!`,
       });
       // Call the completion callback
       onGameComplete?.(score);
@@ -48,18 +51,18 @@ const ColorReactionGame: React.FC<GameProps> = ({ onGameComplete }) => {
   useEffect(() => {
     const handleKeyPress = (event: KeyboardEvent) => {
       if (!gameActive) return;
-      
+
       const key = event.key.toUpperCase();
-      const currentColorObj = colors.find(c => c.name === currentColor);
-      
+      const currentColorObj = colors.find((c) => c.name === currentColor);
+
       if (currentColorObj && key === currentColorObj.key) {
         setScore(score + 1);
         // New color will be set by the useEffect above
       }
     };
 
-    window.addEventListener('keydown', handleKeyPress);
-    return () => window.removeEventListener('keydown', handleKeyPress);
+    window.addEventListener("keydown", handleKeyPress);
+    return () => window.removeEventListener("keydown", handleKeyPress);
   }, [gameActive, currentColor, colors, score]);
 
   const startGame = () => {
@@ -70,33 +73,35 @@ const ColorReactionGame: React.FC<GameProps> = ({ onGameComplete }) => {
     setCurrentColor(getRandomColor().name);
   };
 
-  const currentColorObj = colors.find(c => c.name === currentColor);
+  const currentColorObj = colors.find((c) => c.name === currentColor);
 
   return (
-    <div style={{ 
-      textAlign: 'center', 
-      padding: '2rem',
-      minHeight: '400px',
-      display: 'flex',
-      flexDirection: 'column',
-      justifyContent: 'center',
-      alignItems: 'center'
-    }}>
+    <div
+      style={{
+        textAlign: "center",
+        padding: "2rem",
+        minHeight: "400px",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
       <h2>Color Reaction Game</h2>
       <p>Press the first letter of the color name as fast as you can!</p>
-      
+
       {!gameActive && !gameState.isComplete && (
-        <button 
+        <button
           onClick={startGame}
           style={{
-            padding: '1rem 2rem',
-            fontSize: '1.2rem',
-            backgroundColor: '#4CAF50',
-            color: 'white',
-            border: 'none',
-            borderRadius: '8px',
-            cursor: 'pointer',
-            margin: '2rem 0'
+            padding: "1rem 2rem",
+            fontSize: "1.2rem",
+            backgroundColor: "#4CAF50",
+            color: "white",
+            border: "none",
+            borderRadius: "8px",
+            cursor: "pointer",
+            margin: "2rem 0",
           }}
         >
           Start Game
@@ -105,37 +110,41 @@ const ColorReactionGame: React.FC<GameProps> = ({ onGameComplete }) => {
 
       {gameActive && (
         <>
-          <div style={{
-            fontSize: '1.5rem',
-            margin: '1rem 0',
-            display: 'flex',
-            justifyContent: 'space-between',
-            width: '200px'
-          }}>
+          <div
+            style={{
+              fontSize: "1.5rem",
+              margin: "1rem 0",
+              display: "flex",
+              justifyContent: "space-between",
+              width: "200px",
+            }}
+          >
             <span>Score: {score}</span>
             <span>Time: {timeLeft}s</span>
           </div>
 
           {currentColorObj && (
-            <div style={{
-              width: '200px',
-              height: '200px',
-              backgroundColor: currentColorObj.color,
-              borderRadius: '50%',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              margin: '2rem 0',
-              fontSize: '2rem',
-              fontWeight: 'bold',
-              color: 'white',
-              textShadow: '2px 2px 4px rgba(0,0,0,0.5)'
-            }}>
+            <div
+              style={{
+                width: "200px",
+                height: "200px",
+                backgroundColor: currentColorObj.color,
+                borderRadius: "50%",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                margin: "2rem 0",
+                fontSize: "2rem",
+                fontWeight: "bold",
+                color: "white",
+                textShadow: "2px 2px 4px rgba(0,0,0,0.5)",
+              }}
+            >
               {currentColor}
             </div>
           )}
 
-          <p style={{ fontSize: '1.2rem', margin: '1rem 0' }}>
+          <p style={{ fontSize: "1.2rem", margin: "1rem 0" }}>
             Press <strong>{currentColorObj?.key}</strong> for {currentColor}
           </p>
         </>
@@ -143,23 +152,25 @@ const ColorReactionGame: React.FC<GameProps> = ({ onGameComplete }) => {
 
       {gameState.isComplete && (
         <>
-          <p style={{ 
-            fontSize: '1.5rem', 
-            color: '#4CAF50',
-            margin: '2rem 0'
-          }}>
+          <p
+            style={{
+              fontSize: "1.5rem",
+              color: "#4CAF50",
+              margin: "2rem 0",
+            }}
+          >
             {gameState.message}
           </p>
-          <button 
+          <button
             onClick={startGame}
             style={{
-              padding: '0.75rem 1.5rem',
-              fontSize: '1rem',
-              backgroundColor: '#2196F3',
-              color: 'white',
-              border: 'none',
-              borderRadius: '8px',
-              cursor: 'pointer'
+              padding: "0.75rem 1.5rem",
+              fontSize: "1rem",
+              backgroundColor: "#2196F3",
+              color: "white",
+              border: "none",
+              borderRadius: "8px",
+              cursor: "pointer",
             }}
           >
             Play Again
@@ -167,7 +178,7 @@ const ColorReactionGame: React.FC<GameProps> = ({ onGameComplete }) => {
         </>
       )}
 
-      <div style={{ marginTop: '2rem', fontSize: '0.9rem', color: '#666' }}>
+      <div style={{ marginTop: "2rem", fontSize: "0.9rem", color: "#666" }}>
         <p>Color keys: R = Red, G = Green, B = Blue, Y = Yellow</p>
       </div>
     </div>

@@ -1,8 +1,8 @@
-import GameBrowser from './components/GameBrowser'
-import './App.css'
+import GameBrowser from "./components/GameBrowser";
+import "./App.css";
 
 function App() {
-  return <GameBrowser />
+  return <GameBrowser />;
 }
 
-export default App
+export default App;
